@@ -19,6 +19,7 @@ $(document).ready(function() {
       } else if (status === 'cop') {
         console.log('killed a van!');
         $el.remove();
+        killed++;
       } else {
         endGame();
       }
@@ -40,8 +41,10 @@ $(document).ready(function() {
   };
 
   var vanArrives = function() {
-    vanInterval -= 10;
+    vanInterval -= 1;
     addThing('van',1000);
+    $('h1').first().html('A VAN ARRIVED!');
+    $('h1').last().html('There are ' + (things.length-2 - killed).toString() + ' vans now!');
     setTimeout(vanArrives, vanInterval);
   };
 
@@ -54,16 +57,17 @@ $(document).ready(function() {
   }
 
   window['$body'] = $('body');
-  window['$human'] = $('<p>',{class:'human'}).appendTo($body);
+  window['$human'] = $('<img>',{class:'human', src:'human.png'}).appendTo($body);
   window['status'] = '';
   window['statusCounter'] = 0;
   window['vanInterval'] = 3000;
+  window['killed'] = 0;
   window.things = [];
   window.directions = [];
 
   addThing('cop');
   addThing('taxi');
-  vanArrives();
+  setInterval(vanArrives, 2000);
 
   $(document).keydown(function(e) {
     if (e.keyCode === 37) {
