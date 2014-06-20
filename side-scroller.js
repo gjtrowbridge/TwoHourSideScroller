@@ -31,7 +31,6 @@ $(document).ready(function() {
       statusCounter = 500;
     }
   };
-
   var addThing = function(className, location) {
     location = location || Math.floor(Math.random()*1200);
     things.push($('<p>', {class:className}));
@@ -39,23 +38,25 @@ $(document).ready(function() {
       left: location + 'px'
     }).appendTo($body);
   };
-
   var vanArrives = function() {
     vanInterval -= 1;
-    addThing('van',1000);
-    $('h1').first().html('A VAN ARRIVED!');
-    $('h1').last().html('There are ' + (things.length-2 - killed).toString() + ' vans now!');
-    setTimeout(vanArrives, vanInterval);
+    addThing('van',Math.random()*500+500);
+    if (!gameover) {
+      $('h1').first().html('A VAN ARRIVED!');
+      $('h1').last().html('There are ' + (things.length-2 - killed).toString() + ' vans now!');
+      
+    }
+    vanIntervalId = setTimeout(vanArrives, vanInterval);
   };
-
   var endGame = function() {
     $('h1').css({'color':'red'}).first().html('YOU DIED!');
     $('h1').last().html('YOU SHOULD HAVE GOTTEN OUT OF THERE!');
     $body.css({'background-color':'black'});
     $('h2').css({color: 'white'});
     clearInterval(intId);
+    gameover = true;
   }
-
+  window['gameover'] = false;
   window['$body'] = $('body');
   window['$human'] = $('<img>',{class:'human', src:'human.png'}).appendTo($body);
   window['status'] = '';
@@ -64,11 +65,9 @@ $(document).ready(function() {
   window['killed'] = 0;
   window.things = [];
   window.directions = [];
-
   addThing('cop');
   addThing('taxi');
-  setInterval(vanArrives, 2000);
-
+  window['vanIntervalId'] = setInterval(vanArrives, 2000);
   $(document).keydown(function(e) {
     if (e.keyCode === 37) {
       moveGuy($human, -4);
@@ -76,7 +75,6 @@ $(document).ready(function() {
       moveGuy($human, 4);
     }
   });
-
   window.intId = setInterval(function() {
     for (var i=0; i<things.length; i++) {
       checkCollision($human, things[i]);
@@ -104,5 +102,4 @@ $(document).ready(function() {
       moveGuy(things[i], directions[i]);
     }
   }, 10);
-})
-
+});
